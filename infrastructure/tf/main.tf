@@ -1,12 +1,7 @@
 resource "google_storage_bucket" "bucket" {
-  name = "test-bucket"
+  name = "credit-to-debit-bucket"
 }
 
-resource "google_storage_bucket_object" "archive" {
-  name   = "index.zip"
-  bucket = google_storage_bucket.bucket.name
-  source = "./path/to/zip/file/which/contains/code"
-}
 
 resource "google_cloudfunctions_function" "function" {
   name        = "function-test"
@@ -20,6 +15,9 @@ resource "google_cloudfunctions_function" "function" {
   entry_point           = "helloGET"
   environment_variables = {
       STARLING_API_KEY = var.starling_api_key
+      TRUELAYER_ID = var.truelayer_id
+      TRUELAYER_SECRET = var.truelayer_secret
+      TRUELAYER_TOKEN = var.truelayer_token
   }
 }
 
