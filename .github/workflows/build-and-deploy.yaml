@@ -22,6 +22,6 @@ jobs:
           working-directory: src/
           run: gcloud functions deploy credit-to-debit --entry-point Function --runtime go113
             --set-env-vars
-            STARLING_API_KEY=${{ secrets.GCP_PROJECT_ID }},TRUELAYER_ID=${{ secrets.GCP_PROJECT_ID }},TRUELAYER_SECRET=${{ secrets.GCP_PROJECT_ID }},TRUELAYER_TOKEN=${{ secrets.GCP_PROJECT_ID }}
+            STARLING_API_KEY=${{ secrets.STARLING_API_KEY }},TRUELAYER_ID=${{ secrets.TRUELAYER_ID }},TRUELAYER_SECRET=${{ secrets.TRUELAYER_SECRET }},TRUELAYER_TOKEN=${{ secrets.TRUELAYER_TOKEN }}
             --trigger-http
 
