@@ -73,7 +73,7 @@ func listCards(token string) string{
 	return cards.CardList[0].AccountID
 }
 
-func GetTransactions() {
+func GetTransactions() Transactions{
 	token := refreshToken()
 	cardID := listCards(token)
 	
@@ -95,6 +95,5 @@ func GetTransactions() {
 	responseData, _ := ioutil.ReadAll(response.Body)
 	var transactions Transactions
 	json.Unmarshal(responseData, &transactions)
-	fmt.Printf(string(responseData))
-
+	return transactions
 }

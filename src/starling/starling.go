@@ -33,8 +33,35 @@ type Transfer struct {
 	} `json:"amount"`
 }
 
-func listPots(accountId string) {
+type Pots struct {
+	PotList []struct{
+		ID string `json:"savingsGoalUid"`
+		Name string `json:name`
+	} `json:"savingsGoalList"`
+}
 
+func GetPot(accountId string) string {
+	client := &http.Client{}
+	endpoint := fmt.Sprintf("%s/api/v2/account/%s/savings-goals", baseUrl, accountId)
+	req, err := http.NewRequest("GET", endpoint, nil)
+	req.Header.Add("Authorization", bearer)
+
+	response, err := client.Do(req)
+	if err != nil {
+		log.Println("Error on response.\n[ERRO] -", err)
+	}
+
+	responseData, _ := ioutil.ReadAll(response.Body)
+
+	var pots Pots
+	json.Unmarshal(responseData, &pots)
+	for _, pot := range pots.PotList {
+		if pot.Name == "Credit Card" {
+			return pot.ID
+		}
+	}
+
+	return ""
 }
 
 func GetAccount() string {
@@ -61,13 +88,19 @@ func GetAccount() string {
 }
 
 func AddMoneyToGoal(amount int, currency string, accountID string, goalID string) bool {
+
+	id, _ := uuid.NewUUID()
+	var endpoint string
+	if amount > 0{
+		endpoint = fmt.Sprintf("/api/v2/account/%s/savings-goals/%s/add-money/%s", accountID, goalID, id)
+	}else{
+		endpoint = fmt.Sprintf("/api/v2/account/%s/savings-goals/%s/withdraw-money/%s", accountID, goalID, id)
+		amount = -amount
+	}
 	var body Transfer
 	body.Amount.Currency = currency
 	body.Amount.MinorUnits = amount
 	reqBody, _ := json.Marshal(&body)
-	id, _ := uuid.NewUUID()
-	endpoint := fmt.Sprintf("/api/v2/account/%s/savings-goals/%s/add-money/%s", accountID, goalID, id)
-
 	client := &http.Client{}
 	req, err := http.NewRequest("PUT", baseUrl+endpoint, bytes.NewBuffer(reqBody))
 	req.Header.Add("Authorization", bearer)
