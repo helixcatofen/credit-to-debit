@@ -1,14 +1,13 @@
-package main
+package function
 
 import (
 	"github.com/credit-to-debit/truelayer"
 	"github.com/credit-to-debit/starling"
-	// "net/http"
+	"net/http"
 	"fmt"
 )
 
-// func Function(http.ResponseWriter, *http.Request) {
-func main(){
+func Function(http.ResponseWriter, *http.Request) {
 	transactions := truelayer.GetTransactions()
 	fmt.Printf("%v\n", transactions)
 	accountID := starling.GetAccount()
