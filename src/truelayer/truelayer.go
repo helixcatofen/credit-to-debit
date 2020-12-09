@@ -18,19 +18,18 @@ type TokenResponse struct {
 type Cards struct {
 	CardList []struct {
 		AccountID string `json:"account_id"`
-		Name string `json:"display_name"`
+		Name      string `json:"display_name"`
 	} `json:"results"`
 }
 
 type Transactions struct {
 	TransactionList []struct {
-		Description string `json:"description"`
-		Amount float32 `json:"amount"`
+		Description string  `json:"description"`
+		Amount      float32 `json:"amount"`
 	} `json:"results"`
 }
 
 const baseUrl string = "https://api.truelayer.com"
-
 
 func refreshToken() string {
 	clientSecret := os.Getenv("TRUELAYER_SECRET")
@@ -50,6 +49,9 @@ func refreshToken() string {
 	if err != nil {
 		log.Println("Error on response.\n[ERRO] -", err)
 	}
+	if response.StatusCode != 200 {
+		fmt.Printf("TrueLayer: %s\n", response.Status)
+	}
 	responseData, _ := ioutil.ReadAll(response.Body)
 	var tokenResponse TokenResponse
 	json.Unmarshal(responseData, &tokenResponse)
@@ -57,14 +59,17 @@ func refreshToken() string {
 	return tokenResponse.AccessToken
 }
 
-func listCards(token string) string{
+func listCards(token string) string {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", baseUrl+"/data/v1/cards", nil)
-	req.Header.Add("Authorization", "Bearer " + token)
+	req.Header.Add("Authorization", "Bearer "+token)
 
 	response, err := client.Do(req)
 	if err != nil {
 		log.Println("Error on response.\n[ERRO] -", err)
+	}
+	if response.StatusCode != 200 {
+		fmt.Printf("TrueLayer: %s\n", response.Status)
 	}
 
 	responseData, _ := ioutil.ReadAll(response.Body)
@@ -73,25 +78,27 @@ func listCards(token string) string{
 	return cards.CardList[0].AccountID
 }
 
-func GetTransactions() Transactions{
+func GetTransactions() Transactions {
 	token := refreshToken()
 	cardID := listCards(token)
-	
+
 	var hour time.Duration = -3600 * time.Second
-	from := time.Now().Add(hour*25).Format(time.RFC3339)[:19]
+	from := time.Now().Add(hour * 48).Format(time.RFC3339)[:19]
 	to := time.Now().Add(hour).Format(time.RFC3339)[:19]
 
 	fmt.Println(from)
 	client := &http.Client{}
 	endpoint := fmt.Sprintf("%s/data/v1/cards/%s/transactions?from=%s&to=%s", baseUrl, cardID, from, to)
 	req, err := http.NewRequest("GET", endpoint, nil)
-	req.Header.Add("Authorization", "Bearer " + token)
+	req.Header.Add("Authorization", "Bearer "+token)
 
 	response, err := client.Do(req)
 	if err != nil {
 		log.Println("Error on response.\n[ERRO] -", err)
 	}
-
+	if response.StatusCode != 200 {
+		fmt.Printf("TrueLayer: %s\n", response.Status)
+	}
 	responseData, _ := ioutil.ReadAll(response.Body)
 	var transactions Transactions
 	json.Unmarshal(responseData, &transactions)

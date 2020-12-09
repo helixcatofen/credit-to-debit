@@ -34,8 +34,8 @@ type Transfer struct {
 }
 
 type Pots struct {
-	PotList []struct{
-		ID string `json:"savingsGoalUid"`
+	PotList []struct {
+		ID   string `json:"savingsGoalUid"`
 		Name string `json:name`
 	} `json:"savingsGoalList"`
 }
@@ -49,6 +49,10 @@ func GetPot(accountId string) string {
 	response, err := client.Do(req)
 	if err != nil {
 		log.Println("Error on response.\n[ERRO] -", err)
+	}
+
+	if response.StatusCode != 200 {
+		fmt.Printf("Starling: %s\n", response.Status)
 	}
 
 	responseData, _ := ioutil.ReadAll(response.Body)
@@ -74,6 +78,10 @@ func GetAccount() string {
 		log.Println("Error on response.\n[ERRO] -", err)
 	}
 
+	if response.StatusCode != 200 {
+		fmt.Printf("Starling: %s\n", response.Status)
+	}
+
 	responseData, _ := ioutil.ReadAll(response.Body)
 
 	var accounts Accounts
@@ -91,9 +99,9 @@ func AddMoneyToGoal(amount int, currency string, accountID string, goalID string
 
 	id, _ := uuid.NewUUID()
 	var endpoint string
-	if amount > 0{
+	if amount > 0 {
 		endpoint = fmt.Sprintf("/api/v2/account/%s/savings-goals/%s/add-money/%s", accountID, goalID, id)
-	}else{
+	} else {
 		endpoint = fmt.Sprintf("/api/v2/account/%s/savings-goals/%s/withdraw-money/%s", accountID, goalID, id)
 		amount = -amount
 	}
@@ -111,6 +119,7 @@ func AddMoneyToGoal(amount int, currency string, accountID string, goalID string
 		log.Println("Error on response.\n[ERRO] -", err)
 	}
 	if response.StatusCode != 200 {
+		fmt.Printf("Starling: %s\n", response.Status)
 		return false
 	}
 	return true
