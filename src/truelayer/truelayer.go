@@ -22,11 +22,14 @@ type Cards struct {
 	} `json:"results"`
 }
 
+type Transaction struct{
+	Description string  `json:"description"`
+	Amount      float32 `json:"amount"`
+	Id			string	`json:"transaction_id"`
+}
+
 type Transactions struct {
-	TransactionList []struct {
-		Description string  `json:"description"`
-		Amount      float32 `json:"amount"`
-	} `json:"results"`
+	TransactionList []Transaction `json:"results"`
 }
 
 const baseUrl string = "https://api.truelayer.com"
@@ -84,8 +87,8 @@ func GetTransactions() Transactions {
 
 	var hour time.Duration = -3600 * time.Second
   
-	from := time.Now().Add(hour * 72).Format(time.RFC3339)[:19]
-	to := time.Now().Add(hour * 48).Format(time.RFC3339)[:19]
+	from := time.Now().Add(hour * 168).Format(time.RFC3339)[:19]
+	to := time.Now().Add(hour * 1).Format(time.RFC3339)[:19]
 
 	fmt.Println(from)
 	fmt.Println(to)

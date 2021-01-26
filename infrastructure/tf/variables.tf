@@ -1,9 +1,7 @@
-variable "gcp_key" {}
+variable "name" {
+    default = "credit-to-debit"
+}
 
-variable "starling_api_key" {}
-
-variable "truelayer_secret" {}
-
-variable "truelayer_id" {}
-
-variable "truelayer_token" {}
+variable "region" {
+    default = "us-central1"
+}
