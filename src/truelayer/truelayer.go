@@ -83,6 +83,7 @@ func GetTransactions() Transactions {
 	cardID := listCards(token)
 
 	var hour time.Duration = -3600 * time.Second
+  
 	from := time.Now().Add(hour * 72).Format(time.RFC3339)[:19]
 	to := time.Now().Add(hour * 48).Format(time.RFC3339)[:19]
 
