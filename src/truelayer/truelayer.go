@@ -83,10 +83,11 @@ func GetTransactions() Transactions {
 	cardID := listCards(token)
 
 	var hour time.Duration = -3600 * time.Second
-	from := time.Now().Add(hour * 48).Format(time.RFC3339)[:19]
-	to := time.Now().Add(hour).Format(time.RFC3339)[:19]
+	from := time.Now().Add(hour * 72).Format(time.RFC3339)[:19]
+	to := time.Now().Add(hour * 48).Format(time.RFC3339)[:19]
 
 	fmt.Println(from)
+	fmt.Println(to)
 	client := &http.Client{}
 	endpoint := fmt.Sprintf("%s/data/v1/cards/%s/transactions?from=%s&to=%s", baseUrl, cardID, from, to)
 	req, err := http.NewRequest("GET", endpoint, nil)
